@@ -1,0 +1,60 @@
+body{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    background-color: crimson;
+}
+header {
+    text-align: right;
+}
+header a {
+   justify-content: space-between;
+   margin-left: 30px;
+}
+.side-bar {
+/* display: grid; */
+height: 100%;
+width: 50%;
+}
+input {
+    text-align: center;
+}
+
+.page-display {
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.poke-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    border: black 2px solid;
+    text-align: center;
+    margin: 3em
+}
+.poke-info {
+    background-color: black;
+    border: 2px dashed gold;
+    text-transform: uppercase;
+}
+.poke-item {
+    display: grid;
+    border: black 2px solid;
+
+}
+p {
+color: gold;
+background-color: black;
+}
+img {
+    margin: 3em;
+    height: 75%;
+    width: 75%;
+    border: black 2px solid;
+    background-color: gray;
+}
+.selected{
+    display: none;
+}

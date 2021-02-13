@@ -1,69 +1,67 @@
 import React, { Component } from 'react'
 import Pokemon from './data.js'
-
+import DropDown from './dropdown.js'
+import './searchpage.css'
 
 export default class SearchPage extends Component {
     state = {
-        pokemon: Pokemon.pokemon,
-        type_1: Pokemon.type_1,
-        attack: Pokemon.attack,
-        defense: Pokemon.defense,
+        selectedSort: "Ascending",
+        selectedFilter: "pokemon",
+        keyword: "",
       }
-      handleKeywordChange = (e) => {
-        e.preventDefault();
-        this.setState({pokemon: e.target.value})}
-
+      handleKeywordChange = (e) => {;
+          this.setState({keyword: e.target.value});
+          
+        }
         handleFilterClick = (e) => {
-          e.preventDefault();
-          this.setState({ 
-              pokemon: e.target.value,
-              type: e.target.value,
-              attack: Number(e.target.value),
-              defense: Number(e.target.value)
+            this.setState({ 
+                selectedFilter: e.target.value
+            });
+     }
 
-            })}
-            render() {
-        return (
-            <div>
-                <aside className= "side-bar">
-                    <input onChange = {this.handleKeywordChange}></input>
-                    <select onClick = {this.handleClick}>
-                        <option value={Pokemon.pokemon}>Pokemon Name</option>
-                        <option value={Pokemon.type_1}>Type</option>
-                        <option value={Pokemon.attack}>Attack</option>
-                        <option value={Pokemon.defense}>Defense</option>
-                    </select>
-                    <select onClick = {this.handleFilterClick}>
-                        <option value = "">Ascending Order</option>
-                        <option value = "">Descending Order</option>
-                    </select>
-                </aside>
-                
-                {Pokemon.map(Pokemon => <div className = "poke-item" key={Pokemon.pokemon}>
-                        <img src={Pokemon.url_img} alt={Pokemon.pokemon}/>
-                        <p>{Pokemon.pokemon}</p>
-                        <p>{Pokemon.type_1}</p>
-                        <p>{Pokemon.attack}</p>
-                        <p>{Pokemon.defense}</p>
+        handleSort = (e) =>{
+            this.setState({
+                selectedSort: e.target.value
+                });}
+                render() {
+                    if (this.state.selectedSort === 'Ascending') {
+                        Pokemon.sort((a, b) =>
+                            a[this.state.selectedFilter].localeCompare(b[this.state.selectedFilter]));
+                    } else {
+                        Pokemon.sort((a, b) =>
+                            b[this.state.selectedFilter].localeCompare(a[this.state.selectedFilter]));
+                    }
+            
+
+                const filteredPokeList =Pokemon.filter(Pokemon => Pokemon.pokemon.includes(this.state.keyword));
+                filteredPokeList.sort()
+                return (
+            <div className = "page-display">
+                <form className= "side-bar">
+                    <input onChange = {this.handleKeywordChange} placeholder = "Search Pokedex"></input>
+                    <DropDown 
+                    currentValue={this.state.selectedSort}
+                    handleChange={this.handleSort}
+                    options={['Ascending', 'Descending']}/>
+                    <DropDown
+                     currentValue={this.state.selectedFilter}
+                     handleChange={this.handleFilterClick}
+                     options={['pokemon', 'type_1', 'shape', 'ability_1',]} />
+                </form>
+                <div className = "poke-list">
+                {filteredPokeList.map(Pokemon => <div className = "poke-item" key={Pokemon.pokemon}>
+                        <img src={Pokemon.url_image} alt={Pokemon.pokemon}/>
+                        <section className = "poke-info">
+                            <p>{Pokemon.pokemon}</p>
+                            <p>{Pokemon.type_1}</p>
+                            <p>{Pokemon.shape}</p>
+                            <p>{Pokemon.ability_1}</p>
+                        </section>
                     </div>)}
-                
+                </div>
                
             </div>
         )
-     }
 }    
-    //     this.state.pokemon.sort(
-            //         (a,b) => a[this.state.pokemon].localeCompare(b[this.state.pokemon])
-            //     );
-            //     this.state.type.sort(
-            //         (a,b) => a[this.state.type].localeCompare(b[this.state.type])
-            //     )
-            //     this.state.attack.sort(
-            //         (a,b) => a[this.state.attack].localeCompare(b[this.state.attack])
-            //    )
-            //    this.state.defense.sort(
-            //     (a,b) => a[this.state.defense].localeCompare(b[this.state.defense])
-            //     )
-
-        //   const filteredPokemon = this.state.pokemon.filter((pokemon => pokemon.pokemon.includes(this.state.pokemon)))
-        
+}
+       
