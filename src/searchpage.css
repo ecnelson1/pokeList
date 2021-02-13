@@ -55,3 +55,6 @@ img {
     border: black 2px solid;
     background-color: gray;
 }
+.selected{
+    display: none;
+}
