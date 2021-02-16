@@ -6,7 +6,7 @@ import './searchpage.css'
 export default class SearchPage extends Component {
     state = {
         pokedex: [],
-        selectedSort: "Ascending",
+        selectedSort: "asc",
         selectedFilter: "pokemon",
         keyword: "",
         }
@@ -14,14 +14,16 @@ export default class SearchPage extends Component {
           await this.catchEmAll();
         }
       catchEmAll = async () => {
-          const pokedex = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?pokemon=${this.state.keyword}`);
+          const pokedex = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?pokemon=${this.state.keyword}&sort=${this.state.selectedFilter}&direction=${this.state.selectedSort}`);
           this.setState({
               pokedex: pokedex.body.results
             });
         }
       handleKeywordChange = (e) => {;
         
-          this.setState({keyword: e.target.value});
+          this.setState({
+              keyword: e.target.value
+            });
           
         }
         handleFilterClick = (e) => {
@@ -35,7 +37,7 @@ export default class SearchPage extends Component {
     
         handleSort = (e) =>{
         this.setState({
-        selectedSort: e.target.value
+            selectedSort: e.target.value
             });
         }
 
@@ -48,7 +50,7 @@ export default class SearchPage extends Component {
                     <DropDown 
                     currentValue={this.state.selectedSort}
                     handleChange={this.handleSort}
-                    options={['Ascending', 'Descending']}/>
+                    options={['asc', 'desc']}/>
                     <DropDown
                      currentValue={this.state.selectedFilter}
                      handleChange={this.handleFilterClick}
@@ -70,4 +72,3 @@ export default class SearchPage extends Component {
         )
 }    
 }
-       
