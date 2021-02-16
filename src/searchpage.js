@@ -1,15 +1,26 @@
 import React, { Component } from 'react'
-import Pokemon from './data.js'
 import DropDown from './dropdown.js'
+import request from 'superagent'
 import './searchpage.css'
 
 export default class SearchPage extends Component {
     state = {
+        pokedex: [],
         selectedSort: "Ascending",
         selectedFilter: "pokemon",
         keyword: "",
-      }
+        }
+      componentDidMount = async () => {
+          await this.catchEmAll();
+        }
+      catchEmAll = async () => {
+          const pokedex = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?pokemon=${this.state.keyword}`);
+          this.setState({
+              pokedex: pokedex.body.results
+            });
+        }
       handleKeywordChange = (e) => {;
+        
           this.setState({keyword: e.target.value});
           
         }
@@ -18,27 +29,22 @@ export default class SearchPage extends Component {
                 selectedFilter: e.target.value
             });
      }
-
+        handleSubmit = async () => {
+         await this.catchEmAll();
+     }
+    
         handleSort = (e) =>{
-            this.setState({
-                selectedSort: e.target.value
-                });}
-                render() {
-                    if (this.state.selectedSort === 'Ascending') {
-                        Pokemon.sort((a, b) =>
-                            a[this.state.selectedFilter].localeCompare(b[this.state.selectedFilter]));
-                    } else {
-                        Pokemon.sort((a, b) =>
-                            b[this.state.selectedFilter].localeCompare(a[this.state.selectedFilter]));
-                    }
-            
+        this.setState({
+        selectedSort: e.target.value
+            });
+        }
 
-                const filteredPokeList =Pokemon.filter(Pokemon => Pokemon.pokemon.includes(this.state.keyword));
-                filteredPokeList.sort()
+                render() {
                 return (
             <div className = "page-display">
-                <form className= "side-bar">
-                    <input onChange = {this.handleKeywordChange} placeholder = "Search Pokedex"></input>
+                <div className= "side-bar">
+                    <input  onChange = {this.handleKeywordChange} placeholder = "Search Pokedex"></input>
+                    <button onClick = {this.handleSubmit}>Catch em All!</button>
                     <DropDown 
                     currentValue={this.state.selectedSort}
                     handleChange={this.handleSort}
@@ -47,9 +53,9 @@ export default class SearchPage extends Component {
                      currentValue={this.state.selectedFilter}
                      handleChange={this.handleFilterClick}
                      options={['pokemon', 'type_1', 'shape', 'ability_1',]} />
-                </form>
+                </div>
                 <div className = "poke-list">
-                {filteredPokeList.map(Pokemon => <div className = "poke-item" key={Pokemon.pokemon}>
+                {this.state.pokedex.map(Pokemon => <div className = "poke-item" key={Pokemon.pokemon}>
                         <img src={Pokemon.url_image} alt={Pokemon.pokemon}/>
                         <section className = "poke-info">
                             <p>{Pokemon.pokemon}</p>
