@@ -1,55 +1,68 @@
 import React, { Component } from 'react'
-import Pokemon from './data.js'
 import DropDown from './dropdown.js'
+import request from 'superagent'
+import Spinner from './spinner.js'
 import './searchpage.css'
 
 export default class SearchPage extends Component {
     state = {
-        selectedSort: "Ascending",
+        pokedex: [],
+        selectedSort: "asc",
         selectedFilter: "pokemon",
         keyword: "",
-      }
+        loading: false,
+        }
+      componentDidMount = async () => {
+          await this.catchEmAll();
+        }
+      catchEmAll = async () => {
+          this.setState({loading: true});
+          const pokedex = await request.get(`https://pokedex-alchemy.herokuapp.com/api/pokedex?pokemon=${this.state.keyword}&sort=${this.state.selectedFilter}&direction=${this.state.selectedSort}`);
+          this.setState({
+              loading: false,
+              pokedex: pokedex.body.results
+            });
+        }
       handleKeywordChange = (e) => {;
-          this.setState({keyword: e.target.value});
+          this.setState({
+              keyword: e.target.value
+            });
           
         }
         handleFilterClick = (e) => {
             this.setState({ 
-                selectedFilter: e.target.value
+                selectedFilter: e.target.value,
             });
      }
-
+        handleSubmit = async () => {
+         await this.catchEmAll();
+     }
+    
         handleSort = (e) =>{
-            this.setState({
-                selectedSort: e.target.value
-                });}
-                render() {
-                    if (this.state.selectedSort === 'Ascending') {
-                        Pokemon.sort((a, b) =>
-                            a[this.state.selectedFilter].localeCompare(b[this.state.selectedFilter]));
-                    } else {
-                        Pokemon.sort((a, b) =>
-                            b[this.state.selectedFilter].localeCompare(a[this.state.selectedFilter]));
-                    }
-            
+        this.setState({
+            selectedSort: e.target.value
+            });
+        }
 
-                const filteredPokeList =Pokemon.filter(Pokemon => Pokemon.pokemon.includes(this.state.keyword));
-                filteredPokeList.sort()
+                render() {
                 return (
             <div className = "page-display">
-                <form className= "side-bar">
-                    <input onChange = {this.handleKeywordChange} placeholder = "Search Pokedex"></input>
+                <div className= "side-bar">
+                    <input  onChange = {this.handleKeywordChange} placeholder = "Search Keyword"></input>
+                    Sort:
                     <DropDown 
                     currentValue={this.state.selectedSort}
                     handleChange={this.handleSort}
-                    options={['Ascending', 'Descending']}/>
+                    options={['asc', 'desc']}/>
                     <DropDown
                      currentValue={this.state.selectedFilter}
                      handleChange={this.handleFilterClick}
-                     options={['pokemon', 'type_1', 'shape', 'ability_1',]} />
-                </form>
+                     options={['pokemon', 'type_1', 'shape', 'ability_1',]} />  
+                     <button onClick = {this.handleSubmit}>Catch em All!</button>
+                </div>
                 <div className = "poke-list">
-                {filteredPokeList.map(Pokemon => <div className = "poke-item" key={Pokemon.pokemon}>
+                {this.state.loading ? <Spinner/>:
+                this.state.pokedex.map(Pokemon => <div className = "poke-item" key={Pokemon.pokemon}>
                         <img src={Pokemon.url_image} alt={Pokemon.pokemon}/>
                         <section className = "poke-info">
                             <p>{Pokemon.pokemon}</p>
@@ -64,4 +77,3 @@ export default class SearchPage extends Component {
         )
 }    
 }
-       
