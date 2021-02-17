@@ -8,6 +8,7 @@ import {
 import SearchPage from './searchpage.js';
 import HomePage from './home.js';
 import PageHeader from './pageheader.js';
+import PokeDetailsPage from './pokedetails.js'
 
 export default class App extends Component {
     render() {
@@ -25,6 +26,11 @@ export default class App extends Component {
                             path="/search" 
                             exact
                             render={(routerProps) => <SearchPage {...routerProps} />} 
+                        />
+                        <Route 
+                            path="/:caughtPoke" 
+                            exact
+                            render={(routerProps) => <PokeDetailsPage {...routerProps} />} 
                         />
                     </Switch>
                 </Router>
