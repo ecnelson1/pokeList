@@ -1,0 +1,12 @@
+.poke-details{
+    display: grid;
+    margin: 0;
+    text-transform: uppercase;
+    border: gold solid 3px;
+    background-color: rgba(19, 6, 0, 0.783);
+}
+.poke-details p{
+    margin: 0;
+    border: gold solid 1px;
+    text-align: center;
+}
